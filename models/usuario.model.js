@@ -5,7 +5,6 @@ const Usuarios = db.define('usuarios', {
         primaryKey: true,
         type: DataTypes.INTEGER,
         allowNull: false,
-        autoIncrement: true,
     },
     cedula: {
         type: DataTypes.STRING,
