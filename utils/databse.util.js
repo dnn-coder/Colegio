@@ -7,6 +7,7 @@ const db = new Sequelize({
     password: '123456',
     port: 5432,
     database: 'recuerdodb',
+    logging: false,
 });
 
 module.exports = { db, DataTypes };

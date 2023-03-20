@@ -14,15 +14,46 @@ const getAllStudents = async(req, res) => {
     }
 };
 
-const createStudent = (req, res) => {
-    const { name } = req.body;
+const createStudent = async(req, res) => {
+    const {
+        idest,
+        codest,
+        cedest,
+        expedido,
+        pnomest,
+        snomest,
+        papeest,
+        sapeest,
+        sexoest,
+        direcest,
+        barrio,
+        municipio,
+        fnacest,
+        observacionest,
+        claveest,
+        usuarios_codigo,
+        acudientes_coddocumento,
+    } = req.body;
 
-    const newStudent = {
-        id: Math.floor(Math.random() * 100),
-        name,
-    };
-
-    usuarios.push(newStudent);
+    const newStudent = await Estudiantes.create({
+        idest,
+        codest,
+        cedest,
+        expedido,
+        pnomest,
+        snomest,
+        papeest,
+        sapeest,
+        sexoest,
+        direcest,
+        barrio,
+        municipio,
+        fnacest,
+        observacionest,
+        claveest,
+        usuarios_codigo,
+        acudientes_coddocumento,
+    });
 
     res.status(201).json({
         status: 'success',

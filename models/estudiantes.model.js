@@ -63,7 +63,7 @@ const Estudiantes = db.define('estudiantes', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    claveest: {
+    usuarios_codigo: {
         type: DataTypes.INTEGER,
         allowNull: false,
     },

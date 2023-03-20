@@ -26,6 +26,7 @@ const createUser = async(req, res) => {
             usuario,
             password,
             tipo,
+            status,
         } = req.body;
         const newUser = await Usuarios.create({
             codigo,
@@ -37,6 +38,7 @@ const createUser = async(req, res) => {
             usuario,
             password,
             tipo,
+            status,
         });
 
         res.status(201).json({
@@ -47,5 +49,70 @@ const createUser = async(req, res) => {
         console.log(err);
     }
 };
+const getUserById = async(req, res) => {
+    const { codigo } = req.params;
+    const usuario = await Usuarios.findOne({ where: { codigo } });
 
-module.exports = { getAllUsers, createUser };
+    if (!usuario) {
+        return res.status(404).json({
+            status: 'error',
+            message: 'usuario no encontrado',
+        });
+    }
+    res.status(200).json({
+        status: 'success',
+        usuario,
+    });
+};
+
+const updateUser = async(req, res) => {
+    const { codigo } = req.params;
+    const { nombres, sexo, cargo, email, password, tipo, status } = req.body;
+    const usuario = await Usuarios.findOne({ where: { codigo } });
+
+    if (!usuario) {
+        return res.status(404).json({
+            status: 'error',
+            message: 'usuario no encontrado',
+        });
+    }
+
+    await usuario.update({
+        nombres,
+        sexo,
+        cargo,
+        email,
+        password,
+        tipo,
+        status,
+    });
+
+    res.status(204).json({
+        status: 'success',
+    });
+};
+const deleteUser = async(req, res) => {
+    const { codigo } = req.params;
+    const usuario = await Usuarios.findOne({ where: { codigo } });
+
+    if (!usuario) {
+        return res.status(404).json({
+            status: 'error',
+            message: 'usuario no encontrado',
+        });
+    }
+
+    await usuario.update({ status: 'ELIMINADO' });
+
+    res.status(200).json({
+        status: 'success',
+    });
+};
+
+module.exports = {
+    getAllUsers,
+    createUser,
+    updateUser,
+    deleteUser,
+    getUserById,
+};
