@@ -15,8 +15,8 @@ const app = express();
 
 app.use(express.json());
 
-app.use('/usuarios', usuariosRouter);
-app.use('/estudiantes', estudiantesRouter);
+app.use('/api/v1/usuarios', usuariosRouter);
+app.use('/api/v1/estudiantes', estudiantesRouter);
 
 db.authenticate()
     .then(() => console.log('Base de datos autenticada'))
