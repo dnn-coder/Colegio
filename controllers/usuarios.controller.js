@@ -1,59 +1,59 @@
 //Models
+const { Estudiantes } = require('../models/estudiantes.model');
 const { Usuarios } = require('../models/usuario.model');
+const { catchAsync } = require('../utils/catchAsync.util');
 
-const getAllUsers = async(req, res) => {
-    try {
-        const usuarios = await Usuarios.findAll();
-        res.status(200).json({
-            status: 'success',
-            message: 'lista de usuarios ok...',
-            usuarios,
-        });
-    } catch (err) {
-        console.log(err);
-    }
-};
+//controladores
+const getAllUsers = catchAsync(async(req, res, next) => {
+    const usuarios = await Usuarios.findAll({
+        include: Estudiantes,
+    });
+    res.status(200).json({
+        status: 'success',
+        message: 'lista de usuarios ok...',
+        usuarios,
+    });
+});
+const createUser = catchAsync(async(req, res, next) => {
+    const {
+        codigo,
+        cedula,
+        nombres,
+        sexo,
+        cargo,
+        email,
+        usuario,
+        password,
+        tipo,
+        status,
+    } = req.body;
+    const newUser = await Usuarios.create({
+        codigo,
+        cedula,
+        nombres,
+        sexo,
+        cargo,
+        email,
+        usuario,
+        password,
+        tipo,
+        status,
+    });
 
-const createUser = async(req, res) => {
-    try {
-        const {
-            codigo,
-            cedula,
-            nombres,
-            sexo,
-            cargo,
-            email,
-            usuario,
-            password,
-            tipo,
-            status,
-        } = req.body;
-        const newUser = await Usuarios.create({
-            codigo,
-            cedula,
-            nombres,
-            sexo,
-            cargo,
-            email,
-            usuario,
-            password,
-            tipo,
-            status,
-        });
+    res.status(201).json({
+        status: 'success',
+        newUser,
+    });
+});
 
-        res.status(201).json({
-            status: 'success',
-            newUser,
-        });
-    } catch (err) {
-        console.log(err);
-    }
-};
-const getUserById = async(req, res) => {
+const getUserById = catchAsync(async(req, res, next) => {
     const { codigo } = req.params;
-    const usuario = await Usuarios.findOne({ where: { codigo } });
+    const usuarios = await Usuarios.findOne({
+        where: { codigo },
+        include: Estudiantes,
+    });
 
-    if (!usuario) {
+    if (!usuarios) {
         return res.status(404).json({
             status: 'error',
             message: 'usuario no encontrado',
@@ -61,23 +61,23 @@ const getUserById = async(req, res) => {
     }
     res.status(200).json({
         status: 'success',
-        usuario,
+        usuarios,
     });
-};
+});
 
-const updateUser = async(req, res) => {
+const updateUser = catchAsync(async(req, res, next) => {
     const { codigo } = req.params;
     const { nombres, sexo, cargo, email, password, tipo, status } = req.body;
-    const usuario = await Usuarios.findOne({ where: { codigo } });
+    const usuarios = await Usuarios.findOne({ where: { codigo } });
 
-    if (!usuario) {
+    if (!usuarios) {
         return res.status(404).json({
             status: 'error',
             message: 'usuario no encontrado',
         });
     }
 
-    await usuario.update({
+    await usuarios.update({
         nombres,
         sexo,
         cargo,
@@ -89,25 +89,27 @@ const updateUser = async(req, res) => {
 
     res.status(204).json({
         status: 'success',
+        usuarios,
     });
-};
-const deleteUser = async(req, res) => {
-    const { codigo } = req.params;
-    const usuario = await Usuarios.findOne({ where: { codigo } });
+});
 
-    if (!usuario) {
+const deleteUser = catchAsync(async(req, res, next) => {
+    const { codigo } = req.params;
+    const usuarios = await Usuarios.findOne({ where: { codigo } });
+
+    if (!usuarios) {
         return res.status(404).json({
             status: 'error',
             message: 'usuario no encontrado',
         });
     }
 
-    await usuario.update({ status: 'ELIMINADO' });
+    await usuarios.update({ status: 'ELIMINADO' });
 
-    res.status(200).json({
+    res.status(202).json({
         status: 'success',
     });
-};
+});
 
 module.exports = {
     getAllUsers,

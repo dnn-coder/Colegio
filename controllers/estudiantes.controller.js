@@ -1,20 +1,20 @@
 //Models
 const { Estudiantes } = require('../models/estudiantes.model');
+const { Usuarios } = require('../models/usuario.model');
+const { catchAsync } = require('../utils/catchAsync.util');
 
-const getAllStudents = async(req, res) => {
-    try {
-        const estudiantes = await Estudiantes.findAll();
-        res.status(200).json({
-            status: 'success',
-            message: 'lista de estudiantes ok...',
-            estudiantes,
-        });
-    } catch (err) {
-        console.log(err);
-    }
-};
+const getAllStudents = catchAsync(async(req, res, next) => {
+    const estudiantes = await Estudiantes.findAll({
+        include: Usuarios,
+    });
+    res.status(200).json({
+        status: 'success',
+        message: 'lista de estudiantes ok...',
+        estudiantes,
+    });
+});
 
-const createStudent = async(req, res) => {
+const createStudent = catchAsync(async(req, res, next) => {
     const {
         idest,
         codest,
@@ -59,11 +59,13 @@ const createStudent = async(req, res) => {
         status: 'success',
         newStudent,
     });
-};
+});
 
-const getStudentById = async(req, res) => {
+const getStudentById = catchAsync(async(req, res, next) => {
     const { idest } = req.params;
-    const estudiante = await Estudiantes.findOne({ where: { idest } });
+    const estudiante = await Estudiantes.findOne({
+        where: { idest },
+    });
 
     if (!estudiante) {
         return res.status(404).json({
@@ -75,9 +77,9 @@ const getStudentById = async(req, res) => {
         status: 'success',
         estudiante,
     });
-};
+});
 
-const updateStudent = async(req, res) => {
+const updateStudent = catchAsync(async(req, res, next) => {
     const { idest } = req.params;
     const {
         codest,
@@ -129,9 +131,9 @@ const updateStudent = async(req, res) => {
     res.status(204).json({
         status: 'success',
     });
-};
+});
 
-const deleteStudent = async(req, res) => {
+const deleteStudent = catchAsync(async(req, res, next) => {
     const { idest } = req.params;
     const estudiante = await Estudiantes.findOne({ where: { idest } });
 
@@ -147,7 +149,7 @@ const deleteStudent = async(req, res) => {
     res.status(200).json({
         status: 'success',
     });
-};
+});
 
 module.exports = {
     getAllStudents,

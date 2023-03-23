@@ -27,10 +27,6 @@ const Usuarios = db.define('usuarios', {
         allowNull: false,
         unique: true,
     },
-    usuario: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
     password: {
         type: DataTypes.STRING,
         allowNull: false,

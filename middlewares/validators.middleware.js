@@ -1,11 +1,16 @@
 const { body, validationResult } = require('express-validator');
 
+const { AppError } = require('../utils/appError.util');
+
 const checkResult = (req, res, next) => {
     const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
-        const errorsMsgs = errors.array().map(err => err.msg);
-        const messages = errorsMsgs.join(', ');
-        return res.status(400).json({ status: 'error', messages });
+        const errorMsgs = errors.array().map(err => err.msg);
+
+        const message = errorMsgs.join('. ');
+
+        return next(new AppError(message, 400));
     }
     next();
 };
@@ -19,9 +24,6 @@ const createUserValidators = [
     body('sexo').notEmpty().withMessage('El campo sexo no puede estar vacio'),
     body('cargo').notEmpty().withMessage('El campo cargo no puede estar vacio'),
     body('email').isEmail().withMessage('Tienes que ingresar un correo valido'),
-    body('usuario')
-    .notEmpty()
-    .withMessage('El campo usuario no puede estar vacio'),
     body('password')
     .isLength({ min: 8 })
     .withMessage('la contrasena debe tener al menos 8 caracteres')

@@ -1,16 +1,14 @@
 const express = require('express');
-
 //Routers
-
 const { usuariosRouter } = require('./routes/usuarios.routes');
 const { estudiantesRouter } = require('./routes/estudiantes.routes');
 
-//Utils
+// Global err controller
+const { globalErrorHandler } = require('./controllers/error.controller');
 
-const { db } = require('./utils/databse.util');
+const { AppError } = require('./utils/appError.util');
 
 // iniciar la funcion app
-
 const app = express();
 
 app.use(express.json());
@@ -18,14 +16,17 @@ app.use(express.json());
 app.use('/api/v1/usuarios', usuariosRouter);
 app.use('/api/v1/estudiantes', estudiantesRouter);
 
-db.authenticate()
-    .then(() => console.log('Base de datos autenticada'))
-    .catch(err => console.log(err));
+// manejador global de errores
 
-db.sync()
-    .then(() => console.log('Base de datos sincronizada'))
-    .catch(err => console.log(err));
-
-app.listen(4000, () => {
-    console.log('Express app running!!!');
+app.all('*', (req, res, next) => {
+    next(
+        new AppError(
+            `${req.method} ${req.originalUrl} not found in this server`,
+            404
+        )
+    );
 });
+
+app.use(globalErrorHandler);
+
+module.exports = { app };

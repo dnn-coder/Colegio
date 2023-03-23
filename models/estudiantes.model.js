@@ -67,10 +67,6 @@ const Estudiantes = db.define('estudiantes', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    acudientes_coddocumento: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
     status: {
         type: DataTypes.STRING,
         allowNull: false,

@@ -1,10 +1,5 @@
 const express = require('express');
 
-//Middlewares
-const {
-    createUserValidators,
-} = require('../middlewares/validators.middleware');
-
 //controllers
 const {
     getAllUsers,
@@ -14,6 +9,12 @@ const {
     deleteUser,
 } = require('../controllers/usuarios.controller');
 
+//Middlewares
+const {
+    createUserValidators,
+} = require('../middlewares/validators.middleware');
+
+const { userExists } = require('../middlewares/usuarios.middlewares');
 const usuariosRouter = express.Router();
 //definir mis endpoints
 
@@ -21,10 +22,10 @@ usuariosRouter.get('/', getAllUsers);
 
 usuariosRouter.post('/', createUserValidators, createUser);
 
-usuariosRouter.get('/:codigo', getUserById);
+usuariosRouter.get('/:codigo', userExists, getUserById);
 
-usuariosRouter.patch('/:codigo', updateUser);
+usuariosRouter.patch('/:codigo', userExists, updateUser);
 
-usuariosRouter.delete('/:codigo', deleteUser);
+usuariosRouter.delete('/:codigo', userExists, deleteUser);
 
 module.exports = { usuariosRouter };
